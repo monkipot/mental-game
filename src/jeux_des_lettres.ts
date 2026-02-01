@@ -110,16 +110,35 @@ const submitGuess = (): void => {
     if (!gameState) return;
 
     const { currentRow, word } = gameState;
+    const wordLower = word.toLowerCase();
+
+    const getLetter = (index: number): string | null => {
+        const cell = getCell(currentRow, index);
+        return cell ? (cell.textContent || '').toLowerCase() : null;
+    };
+
+    const colorCell = (index: number, color: string): void => {
+        const cell = getCell(currentRow, index);
+        if (cell) cell.style.backgroundColor = color;
+    };
+
+    const letterCounts = wordLower.split('').reduce<Record<string, number>>((acc, char) => {
+        acc[char] = (acc[char] || 0) + 1;
+        return acc;
+    }, {});
+
+    const guess = Array.from({ length: word.length }, (_, i) => getLetter(i));
 
     for (let i = 0; i < word.length; i++) {
-        const cell = getCell(currentRow, i);
-        if (!cell) continue;
+        const letter = guess[i];
+        if (!letter) continue;
 
-        const letter = cell.textContent || '';
-        console.log(`index ${i}: "${letter}" vs "${word[i]}"`);
-
-        if (letter.toLowerCase() === word[i].toLowerCase()) {
-            cell.style.backgroundColor = 'green';
+        if (letter === wordLower[i]) {
+            colorCell(i, 'green');
+            letterCounts[letter]--;
+        } else if (letterCounts[letter] > 0) {
+            colorCell(i, 'orange');
+            letterCounts[letter]--;
         }
     }
 }
