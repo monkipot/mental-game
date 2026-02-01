@@ -27,31 +27,33 @@ const findWord = async (level: LEVEL): Promise<string> => {
     return words[randomIndex];
 }
 
-const maskWord = (word: string): string => {
-    const revealedCount = 2,
-        indexes = Array.from({length: word.length}, (_, i) => i),
-        revealedIndexes = new Set<number>();
+const createGrid = (wordLength: number, attempts = 5): void => {
+    const grid = document.getElementById('grid')!;
+    grid.innerHTML = '';
 
-    while (revealedIndexes.size < revealedCount && revealedIndexes.size < word.length) {
-        const randomIndex = Math.floor(Math.random() * indexes.length);
-        revealedIndexes.add(indexes[randomIndex]);
+    for (let i = 0; i < attempts; i++) {
+        const row = document.createElement('div');
+        row.className = 'row';
+
+        for (let j = 0; j < wordLength; j++) {
+            const cell = document.createElement('div');
+            cell.className = 'cell';
+            row.appendChild(cell);
+        }
+
+        grid.appendChild(row);
     }
-
-    return word.split('').map((char, index) =>
-        revealedIndexes.has(index) ? char : '_'
-    ).join(' ');
 }
 
 const startGame = async (level: LEVEL) => {
     const word = await findWord(level),
         levelsContainer = document.getElementById('levels')!,
-        gameContainer = document.getElementById('game')!,
-        wordDisplay = document.getElementById('word-display')!;
+        gameContainer = document.getElementById('game')!;
 
     levelsContainer.style.display = 'none';
     gameContainer.style.display = 'block';
 
-    wordDisplay.textContent = maskWord(word);
+    createGrid(word.length);
 }
 
 const renderLevels = () => {
