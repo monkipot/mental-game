@@ -6,6 +6,7 @@ type GameState = {
 }
 
 let gameState: GameState | null = null;
+let startTime: number | null = null;
 
 enum LEVEL {
     EASY = 'Simple',
@@ -58,6 +59,23 @@ const findWord = async (level: LEVEL): Promise<string> => {
         randomIndex = Math.floor(Math.random() * words.length);
 
     return words[randomIndex];
+}
+
+const formatTime = (seconds: number): string => {
+    const mins = Math.floor(seconds / 60),
+        secs = seconds % 60;
+    return `${mins.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;
+}
+
+const timer = (): void => {
+    startTime = Date.now();
+    const timerElement = document.getElementById('timer')!;
+
+    setInterval(() => {
+        if (startTime === null) return;
+        const time = Math.floor((Date.now() - startTime) / 1000);
+        timerElement.textContent = formatTime(time);
+    }, 1000);
 }
 
 const getCell = (row: number, col: number): HTMLElement | null => {
@@ -222,6 +240,7 @@ const startGame = async (level: LEVEL) => {
     gameContainer.style.display = 'block';
 
     createGrid(word, attempts, revealedCount);
+    timer();
 }
 
 const renderLevels = () => {
