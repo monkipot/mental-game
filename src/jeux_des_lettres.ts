@@ -30,6 +30,18 @@ const getAttempts = (level: LEVEL): number => {
     }
 }
 
+const getRevealedLetters = (level: LEVEL): number => {
+    switch (level) {
+        case LEVEL.EASY:
+        case LEVEL.MIDDLE:
+            return 0;
+        case LEVEL.HARD:
+            return 1;
+        case LEVEL.EXPERT:
+            return 2;
+    }
+}
+
 const findWord = async (level: LEVEL): Promise<string> => {
     const response = await fetch(getDifficultyFile(level)),
         text = await response.text(),
@@ -39,17 +51,29 @@ const findWord = async (level: LEVEL): Promise<string> => {
     return words[randomIndex];
 }
 
-const createGrid = (wordLength: number, attempts: number): void => {
+const createGrid = (word: string, attempts: number, revealedCount: number): void => {
     const grid = document.getElementById('grid')!;
     grid.innerHTML = '';
+
+    const revealedIndexes = new Set<number>();
+    while (revealedIndexes.size < revealedCount && revealedIndexes.size < word.length) {
+        const randomIndex = Math.floor(Math.random() * word.length);
+        revealedIndexes.add(randomIndex);
+    }
 
     for (let i = 0; i < attempts; i++) {
         const row = document.createElement('div');
         row.className = 'row';
 
-        for (let j = 0; j < wordLength; j++) {
+        for (let j = 0; j < word.length; j++) {
             const cell = document.createElement('div');
             cell.className = 'cell';
+
+            if (i === 0 && revealedIndexes.has(j)) {
+                cell.textContent = word[j];
+                cell.classList.add('revealed');
+            }
+
             row.appendChild(cell);
         }
 
@@ -61,12 +85,13 @@ const startGame = async (level: LEVEL) => {
     const word = await findWord(level),
         levelsContainer = document.getElementById('levels')!,
         gameContainer = document.getElementById('game')!,
-        attempts = getAttempts(level);
+        attempts = getAttempts(level),
+        revealedCount = getRevealedLetters(level);
 
     levelsContainer.style.display = 'none';
     gameContainer.style.display = 'block';
 
-    createGrid(word.length, attempts);
+    createGrid(word, attempts, revealedCount);
 }
 
 const renderLevels = () => {
