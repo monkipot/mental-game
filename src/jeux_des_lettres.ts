@@ -229,7 +229,7 @@ const createGrid = (word: string, attempts: number, revealedCount: number): void
         currentCol: 0,
         maxRows: attempts
     };
-    console.log(word)
+
     for (let i = 0; i < attempts; i++) {
         const row = document.createElement('div');
         row.className = 'row';
