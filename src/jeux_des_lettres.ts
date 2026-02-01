@@ -81,6 +81,25 @@ const moveToNextWritableCell = (): void => {
     }
 }
 
+const isRowFull = (): boolean => {
+    if (!gameState) return false;
+
+    for (let i = 0; i < gameState.word.length; i++) {
+        if (!gameState.revealedPositions.has(i)) {
+            const cell = getCell(gameState.currentRow, i);
+            if (!cell?.textContent) return false;
+        }
+    }
+    return true;
+}
+
+const updateSubmitButton = (): void => {
+    const button = document.getElementById('submit-btn') as HTMLButtonElement;
+    if (button) {
+        button.disabled = !isRowFull();
+    }
+}
+
 const handleKeyPress = (event: KeyboardEvent): void => {
     if (!gameState) return;
 
@@ -92,9 +111,12 @@ const handleKeyPress = (event: KeyboardEvent): void => {
             }
             const cell = getCell(gameState.currentRow, gameState.currentCol);
             if (cell) cell.textContent = '';
+            updateSubmitButton();
         }
     } else if (event.key === 'Enter') {
-        submitGuess();
+        if (isRowFull()) {
+            submitGuess();
+        }
     } else if (/^[a-zA-Z]$/.test(event.key)) {
         moveToNextWritableCell();
         const cell = getCell(gameState.currentRow, gameState.currentCol);
@@ -102,6 +124,7 @@ const handleKeyPress = (event: KeyboardEvent): void => {
             cell.textContent = event.key.toUpperCase();
             gameState.currentCol++;
             moveToNextWritableCell();
+            updateSubmitButton();
         }
     }
 }
@@ -144,6 +167,7 @@ const submitGuess = (): void => {
 
     gameState.currentRow++;
     gameState.currentCol = 0;
+    updateSubmitButton();
 }
 
 const createGrid = (word: string, attempts: number, revealedCount: number): void => {
@@ -182,6 +206,7 @@ const createGrid = (word: string, attempts: number, revealedCount: number): void
     }
 
     moveToNextWritableCell();
+    updateSubmitButton();
     document.addEventListener('keydown', handleKeyPress);
     document.getElementById('submit-btn')!.addEventListener('click', submitGuess);
 }
