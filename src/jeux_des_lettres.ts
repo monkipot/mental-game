@@ -18,6 +18,18 @@ const getDifficultyFile = (level: LEVEL): string => {
     }
 }
 
+const getAttempts = (level: LEVEL): number => {
+    switch (level) {
+        case LEVEL.EASY:
+            return 4;
+        case LEVEL.MIDDLE:
+        case LEVEL.HARD:
+            return 5;
+        case LEVEL.EXPERT:
+            return 6;
+    }
+}
+
 const findWord = async (level: LEVEL): Promise<string> => {
     const response = await fetch(getDifficultyFile(level)),
         text = await response.text(),
@@ -27,7 +39,7 @@ const findWord = async (level: LEVEL): Promise<string> => {
     return words[randomIndex];
 }
 
-const createGrid = (wordLength: number, attempts = 5): void => {
+const createGrid = (wordLength: number, attempts: number): void => {
     const grid = document.getElementById('grid')!;
     grid.innerHTML = '';
 
@@ -48,12 +60,13 @@ const createGrid = (wordLength: number, attempts = 5): void => {
 const startGame = async (level: LEVEL) => {
     const word = await findWord(level),
         levelsContainer = document.getElementById('levels')!,
-        gameContainer = document.getElementById('game')!;
+        gameContainer = document.getElementById('game')!,
+        attempts = getAttempts(level);
 
     levelsContainer.style.display = 'none';
     gameContainer.style.display = 'block';
 
-    createGrid(word.length);
+    createGrid(word.length, attempts);
 }
 
 const renderLevels = () => {
