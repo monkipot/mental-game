@@ -19,13 +19,13 @@ enum LEVEL {
 const getDifficultyFile = (level: LEVEL): string => {
     switch (level) {
         case LEVEL.EASY:
-            return '/words_easy.txt';
+            return 'words_easy.txt';
         case LEVEL.MIDDLE:
-            return '/words_middle.txt';
+            return 'words_middle.txt';
         case LEVEL.HARD:
-            return '/words_hard.txt';
+            return 'words_hard.txt';
         case LEVEL.EXPERT:
-            return '/words_expert.txt';
+            return 'words_expert.txt';
     }
 }
 
