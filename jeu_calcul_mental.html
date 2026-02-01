@@ -36,11 +36,29 @@
       #timer.danger {
         color: red;
       }
+      #question {
+        font-size: 36px;
+        font-weight: bold;
+        margin-bottom: 20px;
+      }
+      #score {
+        font-size: 24px;
+        margin-bottom: 10px;
+      }
+      #input-display {
+        font-size: 32px;
+        margin-bottom: 20px;
+        min-height: 40px;
+        font-family: monospace;
+      }
     </style>
   </head>
   <body>
     <div id="app">
+      <div id="score">Score: 0</div>
       <div id="timer">10</div>
+      <div id="question"></div>
+      <div id="input-display"></div>
       <div class="numpad">
         <button>1</button>
         <button>2</button>
@@ -51,7 +69,9 @@
         <button>7</button>
         <button>8</button>
         <button>9</button>
-        <button style="grid-column: span 3;">0</button>
+        <button>C</button>
+        <button>0</button>
+        <button>OK</button>
       </div>
     </div>
     <script type="module" src="/src/jeu_calcul_mental.ts"></script>
