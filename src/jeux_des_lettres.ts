@@ -3,6 +3,7 @@ type GameState = {
     revealedPositions: Set<number>;
     currentRow: number;
     currentCol: number;
+    maxRows: number;
 }
 
 let gameState: GameState | null = null;
@@ -183,10 +184,33 @@ const submitGuess = (): void => {
         }
     }
 
+    const isWin = guess.every((letter, i) => letter === wordLower[i]);
+
+    if (isWin) {
+        alert(`Bravo ! Vous avez gagné en ${document.getElementById('timer')!.textContent} !`);
+        reset();
+        return;
+    }
 
     gameState.currentRow++;
+
+    if (gameState.currentRow >= gameState.maxRows) {
+        alert(`Le mot était "${word}".`);
+        reset();
+        return;
+    }
+
     gameState.currentCol = 0;
     updateSubmitButton();
+}
+
+const reset = (): void => {
+    document.getElementById('game')!.style.display = 'none';
+    document.getElementById('levels')!.style.display = 'block';
+    document.getElementById('grid')!.innerHTML = '';
+    document.getElementById('timer')!.textContent = '00:00';
+    gameState = null;
+    startTime = null;
 }
 
 const createGrid = (word: string, attempts: number, revealedCount: number): void => {
@@ -202,7 +226,8 @@ const createGrid = (word: string, attempts: number, revealedCount: number): void
         word,
         revealedPositions,
         currentRow: 0,
-        currentCol: 0
+        currentCol: 0,
+        maxRows: attempts
     };
     console.log(word)
     for (let i = 0; i < attempts; i++) {
