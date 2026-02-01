@@ -131,7 +131,7 @@ const resetGame = (): void => {
 }
 
 const updateScoreDisplay = (): void => {
-    scoreElement.textContent = score.toString();
+    scoreElement.textContent = 'Score: ' + score.toString();
 }
 
 const newQuestion = (): void => {
