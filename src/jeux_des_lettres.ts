@@ -23,6 +23,21 @@ const findWord = async (level: LEVEL): Promise<string> => {
     return words[randomIndex];
 }
 
+const maskWord = (word: string): string => {
+    const revealedCount = 2;
+    const indexes = Array.from({ length: word.length }, (_, i) => i);
+    const revealedIndexes = new Set<number>();
+
+    while (revealedIndexes.size < revealedCount && revealedIndexes.size < word.length) {
+        const randomIndex = Math.floor(Math.random() * indexes.length);
+        revealedIndexes.add(indexes[randomIndex]);
+    }
+
+    return word.split('').map((char, index) =>
+        revealedIndexes.has(index) ? char : '_'
+    ).join(' ');
+}
+
 const startGame = async (level: LEVEL) => {
     const word = await findWord(level);
     const levelsContainer = document.getElementById('levels')!;
@@ -32,7 +47,7 @@ const startGame = async (level: LEVEL) => {
     levelsContainer.style.display = 'none';
     gameContainer.style.display = 'block';
 
-    wordDisplay.textContent = word;
+    wordDisplay.textContent = maskWord(word);
 }
 
 const renderLevels = () => {
