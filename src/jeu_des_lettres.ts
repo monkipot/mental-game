@@ -8,6 +8,7 @@ type GameState = {
 
 let gameState: GameState | null = null;
 let startTime: number | null = null;
+let isFromHiddenInput = false;
 
 enum LEVEL {
     EASY = 'Simple',
@@ -136,7 +137,7 @@ const handleKeyPress = (event: KeyboardEvent): void => {
         if (isRowFull()) {
             submitGuess();
         }
-    } else if (/^[a-zA-Z]$/.test(event.key)) {
+    } else if (/^[a-zA-Z]$/.test(event.key) && !isFromHiddenInput) {
         moveToNextWritableCell();
         const cell = getCell(gameState.currentRow, gameState.currentCol);
         if (cell && gameState.currentCol < gameState.word.length) {
@@ -146,6 +147,8 @@ const handleKeyPress = (event: KeyboardEvent): void => {
             updateSubmitButton();
         }
     }
+
+    isFromHiddenInput = false;
 }
 
 const submitGuess = (): void => {
@@ -259,13 +262,16 @@ const createGrid = (word: string, attempts: number, revealedCount: number): void
     hiddenInput.value = '';
     hiddenInput.focus();
     hiddenInput.addEventListener('input', (e) => {
+        e.preventDefault();
         const target = e.target as HTMLInputElement;
         const value = target.value;
         const lastChar = value.slice(-1).toUpperCase();
 
         if (value === '') {
+            isFromHiddenInput = true;
             handleKeyPress(new KeyboardEvent('keydown', { key: 'Backspace' }));
         } else if (/^[A-Z]$/.test(lastChar)) {
+            isFromHiddenInput = true;
             handleKeyPress(new KeyboardEvent('keydown', { key: lastChar }));
         }
         target.value = '';
