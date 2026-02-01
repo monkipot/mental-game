@@ -93,6 +93,8 @@ const handleKeyPress = (event: KeyboardEvent): void => {
             const cell = getCell(gameState.currentRow, gameState.currentCol);
             if (cell) cell.textContent = '';
         }
+    } else if (event.key === 'Enter') {
+        submitGuess();
     } else if (/^[a-zA-Z]$/.test(event.key)) {
         moveToNextWritableCell();
         const cell = getCell(gameState.currentRow, gameState.currentCol);
@@ -100,6 +102,24 @@ const handleKeyPress = (event: KeyboardEvent): void => {
             cell.textContent = event.key.toUpperCase();
             gameState.currentCol++;
             moveToNextWritableCell();
+        }
+    }
+}
+
+const submitGuess = (): void => {
+    if (!gameState) return;
+
+    const { currentRow, word } = gameState;
+
+    for (let i = 0; i < word.length; i++) {
+        const cell = getCell(currentRow, i);
+        if (!cell) continue;
+
+        const letter = cell.textContent || '';
+        console.log(`index ${i}: "${letter}" vs "${word[i]}"`);
+
+        if (letter.toLowerCase() === word[i].toLowerCase()) {
+            cell.style.backgroundColor = 'green';
         }
     }
 }
@@ -119,7 +139,7 @@ const createGrid = (word: string, attempts: number, revealedCount: number): void
         currentRow: 0,
         currentCol: 0
     };
-
+    console.log(word)
     for (let i = 0; i < attempts; i++) {
         const row = document.createElement('div');
         row.className = 'row';
@@ -141,6 +161,7 @@ const createGrid = (word: string, attempts: number, revealedCount: number): void
 
     moveToNextWritableCell();
     document.addEventListener('keydown', handleKeyPress);
+    document.getElementById('submit-btn')!.addEventListener('click', submitGuess);
 }
 
 const startGame = async (level: LEVEL) => {
