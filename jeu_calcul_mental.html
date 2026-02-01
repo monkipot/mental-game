@@ -4,9 +4,45 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Jeu calcul mental</title>
+    <style>
+      .numpad {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 10px;
+        max-width: 200px;
+      }
+      .numpad button {
+        width: 60px;
+        height: 60px;
+        font-size: 24px;
+        font-weight: bold;
+        cursor: pointer;
+        border: 2px solid #ccc;
+        border-radius: 8px;
+        background-color: #f0f0f0;
+      }
+      .numpad button:hover {
+        background-color: #e0e0e0;
+      }
+      .numpad button:active {
+        background-color: #d0d0d0;
+      }
+    </style>
   </head>
   <body>
     <div id="app">
+      <div class="numpad">
+        <button>1</button>
+        <button>2</button>
+        <button>3</button>
+        <button>4</button>
+        <button>5</button>
+        <button>6</button>
+        <button>7</button>
+        <button>8</button>
+        <button>9</button>
+        <button style="grid-column: span 3;">0</button>
+      </div>
     </div>
     <script type="module" src="/src/jeu_calcul_mental.ts"></script>
   </body>
