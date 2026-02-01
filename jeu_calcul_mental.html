@@ -27,10 +27,20 @@
       .numpad button:active {
         background-color: #d0d0d0;
       }
+      #timer {
+        font-size: 48px;
+        font-weight: bold;
+        margin-bottom: 20px;
+        font-family: monospace;
+      }
+      #timer.danger {
+        color: red;
+      }
     </style>
   </head>
   <body>
     <div id="app">
+      <div id="timer">10</div>
       <div class="numpad">
         <button>1</button>
         <button>2</button>
