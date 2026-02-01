@@ -91,7 +91,10 @@ const getCell = (row: number, col: number): HTMLElement | null => {
 const isWritableCell = (col: number): boolean => {
     if (!gameState) return true;
 
-    return !gameState.revealedPositions.has(col);
+    if (gameState.currentRow === 0) {
+        return !gameState.revealedPositions.has(col);
+    }
+    return true;
 }
 
 const moveToNextWritableCell = (): void => {
@@ -99,16 +102,18 @@ const moveToNextWritableCell = (): void => {
     while (gameState.currentCol < gameState.word.length && !isWritableCell(gameState.currentCol)) {
         gameState.currentCol++;
     }
+
+    if (gameState.currentCol >= gameState.word.length) {
+        gameState.currentCol = gameState.word.length;
+    }
 }
 
 const isRowFull = (): boolean => {
     if (!gameState) return false;
 
     for (let i = 0; i < gameState.word.length; i++) {
-        if (!gameState.revealedPositions.has(i)) {
-            const cell = getCell(gameState.currentRow, i);
-            if (!cell?.textContent) return false;
-        }
+        const cell = getCell(gameState.currentRow, i);
+        if (!cell?.textContent) return false;
     }
     return true;
 }
@@ -219,6 +224,29 @@ const reset = (): void => {
     startTime = null;
 }
 
+const setListeners = (): void => {
+    const hiddenInput = document.getElementById('hidden-input') as HTMLInputElement;
+    hiddenInput.addEventListener('input', (e) => {
+        e.preventDefault();
+        const target = e.target as HTMLInputElement,
+            value = target.value,
+            lastChar = value.slice(-1).toUpperCase();
+
+        if (value === '') {
+            isFromHiddenInput = true;
+            handleKeyPress(new KeyboardEvent('keydown', { key: 'Backspace' }));
+        } else if (/^[A-Z]$/.test(lastChar)) {
+            isFromHiddenInput = true;
+            handleKeyPress(new KeyboardEvent('keydown', { key: lastChar }));
+        }
+        target.value = '';
+    });
+
+    document.getElementById('grid')!.addEventListener('click', () => hiddenInput.focus());
+    document.addEventListener('keydown', handleKeyPress);
+    document.getElementById('submit-btn')!.addEventListener('click', submitGuess);
+}
+
 const createGrid = (word: string, attempts: number, revealedCount: number): void => {
     const grid = document.getElementById('grid')!;
     grid.innerHTML = '';
@@ -261,26 +289,6 @@ const createGrid = (word: string, attempts: number, revealedCount: number): void
     const hiddenInput = document.getElementById('hidden-input') as HTMLInputElement;
     hiddenInput.value = '';
     hiddenInput.focus();
-    hiddenInput.addEventListener('input', (e) => {
-        e.preventDefault();
-        const target = e.target as HTMLInputElement;
-        const value = target.value;
-        const lastChar = value.slice(-1).toUpperCase();
-
-        if (value === '') {
-            isFromHiddenInput = true;
-            handleKeyPress(new KeyboardEvent('keydown', { key: 'Backspace' }));
-        } else if (/^[A-Z]$/.test(lastChar)) {
-            isFromHiddenInput = true;
-            handleKeyPress(new KeyboardEvent('keydown', { key: lastChar }));
-        }
-        target.value = '';
-    });
-
-    grid.addEventListener('click', () => hiddenInput.focus());
-
-    document.addEventListener('keydown', handleKeyPress);
-    document.getElementById('submit-btn')!.addEventListener('click', submitGuess);
 }
 
 const startGame = async (level: LEVEL) => {
@@ -309,4 +317,5 @@ const renderLevels = () => {
     });
 }
 
+setListeners();
 renderLevels();
