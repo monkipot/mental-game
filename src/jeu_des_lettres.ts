@@ -212,7 +212,7 @@ const submitGuess = (): void => {
 
 const reset = (): void => {
     document.getElementById('game')!.style.display = 'none';
-    document.getElementById('levels')!.style.display = 'block';
+    document.getElementById('levels')!.style.display = 'flex';
     document.getElementById('grid')!.innerHTML = '';
     document.getElementById('timer')!.textContent = '00:00';
     gameState = null;
