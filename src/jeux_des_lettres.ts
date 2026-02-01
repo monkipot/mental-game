@@ -183,6 +183,7 @@ const submitGuess = (): void => {
         }
     }
 
+
     gameState.currentRow++;
     gameState.currentCol = 0;
     updateSubmitButton();
