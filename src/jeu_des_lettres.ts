@@ -33,7 +33,7 @@ const getDifficultyFile = (level: LEVEL): string => {
 const getAttempts = (level: LEVEL): number => {
     switch (level) {
         case LEVEL.EASY:
-            return 4;
+            return 6;
         case LEVEL.MIDDLE:
         case LEVEL.HARD:
             return 5;
