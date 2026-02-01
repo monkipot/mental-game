@@ -1,3 +1,12 @@
+type GameState = {
+    word: string;
+    revealedPositions: Set<number>;
+    currentRow: number;
+    currentCol: number;
+}
+
+let gameState: GameState | null = null;
+
 enum LEVEL {
     EASY = 'Simple',
     MIDDLE = 'Moyen',
@@ -51,15 +60,65 @@ const findWord = async (level: LEVEL): Promise<string> => {
     return words[randomIndex];
 }
 
+const getCell = (row: number, col: number): HTMLElement | null => {
+    const grid = document.getElementById('grid')!,
+        rows = grid.children,
+        cells = rows[row].children;
+
+    return cells[col] as HTMLElement;
+}
+
+const isWritableCell = (col: number): boolean => {
+    if (!gameState) return true;
+
+    return !gameState.revealedPositions.has(col);
+}
+
+const moveToNextWritableCell = (): void => {
+    if (!gameState) return;
+    while (gameState.currentCol < gameState.word.length && !isWritableCell(gameState.currentCol)) {
+        gameState.currentCol++;
+    }
+}
+
+const handleKeyPress = (event: KeyboardEvent): void => {
+    if (!gameState) return;
+
+    if (event.key === 'Backspace') {
+        if (gameState.currentCol > 0) {
+            gameState.currentCol--;
+            while (gameState.currentCol > 0 && !isWritableCell(gameState.currentCol)) {
+                gameState.currentCol--;
+            }
+            const cell = getCell(gameState.currentRow, gameState.currentCol);
+            if (cell) cell.textContent = '';
+        }
+    } else if (/^[a-zA-Z]$/.test(event.key)) {
+        moveToNextWritableCell();
+        const cell = getCell(gameState.currentRow, gameState.currentCol);
+        if (cell && gameState.currentCol < gameState.word.length) {
+            cell.textContent = event.key.toUpperCase();
+            gameState.currentCol++;
+            moveToNextWritableCell();
+        }
+    }
+}
+
 const createGrid = (word: string, attempts: number, revealedCount: number): void => {
     const grid = document.getElementById('grid')!;
     grid.innerHTML = '';
 
-    const revealedIndexes = new Set<number>();
-    while (revealedIndexes.size < revealedCount && revealedIndexes.size < word.length) {
-        const randomIndex = Math.floor(Math.random() * word.length);
-        revealedIndexes.add(randomIndex);
+    const revealedPositions = new Set<number>();
+    while (revealedPositions.size < revealedCount && revealedPositions.size < word.length) {
+        revealedPositions.add(Math.floor(Math.random() * word.length));
     }
+
+    gameState = {
+        word,
+        revealedPositions,
+        currentRow: 0,
+        currentCol: 0
+    };
 
     for (let i = 0; i < attempts; i++) {
         const row = document.createElement('div');
@@ -69,7 +128,7 @@ const createGrid = (word: string, attempts: number, revealedCount: number): void
             const cell = document.createElement('div');
             cell.className = 'cell';
 
-            if (i === 0 && revealedIndexes.has(j)) {
+            if (i === 0 && revealedPositions.has(j)) {
                 cell.textContent = word[j];
                 cell.classList.add('revealed');
             }
@@ -79,6 +138,9 @@ const createGrid = (word: string, attempts: number, revealedCount: number): void
 
         grid.appendChild(row);
     }
+
+    moveToNextWritableCell();
+    document.addEventListener('keydown', handleKeyPress);
 }
 
 const startGame = async (level: LEVEL) => {
