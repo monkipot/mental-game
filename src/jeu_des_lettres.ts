@@ -202,6 +202,9 @@ const submitGuess = (): void => {
 
     gameState.currentCol = 0;
     updateSubmitButton();
+
+    const hiddenInput = document.getElementById('hidden-input') as HTMLInputElement;
+    hiddenInput.focus();
 }
 
 const reset = (): void => {
@@ -251,6 +254,25 @@ const createGrid = (word: string, attempts: number, revealedCount: number): void
 
     moveToNextWritableCell();
     updateSubmitButton();
+
+    const hiddenInput = document.getElementById('hidden-input') as HTMLInputElement;
+    hiddenInput.value = '';
+    hiddenInput.focus();
+    hiddenInput.addEventListener('input', (e) => {
+        const target = e.target as HTMLInputElement;
+        const value = target.value;
+        const lastChar = value.slice(-1).toUpperCase();
+
+        if (value === '') {
+            handleKeyPress(new KeyboardEvent('keydown', { key: 'Backspace' }));
+        } else if (/^[A-Z]$/.test(lastChar)) {
+            handleKeyPress(new KeyboardEvent('keydown', { key: lastChar }));
+        }
+        target.value = '';
+    });
+
+    grid.addEventListener('click', () => hiddenInput.focus());
+
     document.addEventListener('keydown', handleKeyPress);
     document.getElementById('submit-btn')!.addEventListener('click', submitGuess);
 }
