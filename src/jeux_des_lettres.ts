@@ -141,6 +141,9 @@ const submitGuess = (): void => {
             letterCounts[letter]--;
         }
     }
+
+    gameState.currentRow++;
+    gameState.currentCol = 0;
 }
 
 const createGrid = (word: string, attempts: number, revealedCount: number): void => {
