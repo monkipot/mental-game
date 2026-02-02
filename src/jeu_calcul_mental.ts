@@ -29,47 +29,28 @@ const generateOperation = (): Operation => {
         operators = ['+', '-', '×', '÷'];
     }
 
-    const operator = operators[Math.floor(Math.random() * operators.length)];
+    const operator = operators[Math.floor(Math.random() * operators.length)],
+        difficulty = Math.min(score, 100);
 
     switch (operator) {
         case '+':
-            if (score > 50) {
-                leftOperand = Math.floor(Math.random() * 900) + 100;
-                rightOperand = Math.floor(Math.random() * 900) + 100;
-            } else {
-                leftOperand = Math.floor(Math.random() * 50) + 1;
-                rightOperand = Math.floor(Math.random() * 50) + 1;
-            }
+            leftOperand = Math.floor(Math.random() * (difficulty * 5 + 10)) + 1;
+            rightOperand = Math.floor(Math.random() * (difficulty * 5 + 10)) + 1;
             answer = leftOperand + rightOperand;
             break;
         case '-':
-            if (score > 50) {
-                leftOperand = Math.floor(Math.random() * 900) + 100;
-                rightOperand = Math.floor(Math.random() * leftOperand);
-            } else {
-                leftOperand = Math.floor(Math.random() * 50) + 10;
-                rightOperand = Math.floor(Math.random() * leftOperand);
-            }
+            leftOperand = Math.floor(Math.random() * (difficulty * 5 + 20)) + 10;
+            rightOperand = Math.floor(Math.random() * leftOperand);
             answer = leftOperand - rightOperand;
             break;
         case '×':
-            if (score > 75) {
-                leftOperand = Math.floor(Math.random() * 100) + 1;
-                rightOperand = Math.floor(Math.random() * 100) + 1;
-            } else {
-                leftOperand = Math.floor(Math.random() * 12) + 1;
-                rightOperand = Math.floor(Math.random() * 12) + 1;
-            }
+            leftOperand = Math.min(Math.floor(Math.random() * (Math.floor(difficulty / 2) + 10)) + 1, 999);
+            rightOperand = Math.min(Math.floor(Math.random() * (Math.floor(difficulty / 3) + 10)) + 1, 99);
             answer = leftOperand * rightOperand;
             break;
         case '÷':
-            if (score > 75) {
-                rightOperand = Math.floor(Math.random() * 100) + 1;
-                answer = Math.floor(Math.random() * 100) + 1;
-            } else {
-                rightOperand = Math.floor(Math.random() * 12) + 1;
-                answer = Math.floor(Math.random() * 12) + 1;
-            }
+            rightOperand = Math.min(Math.floor(Math.random() * (Math.floor(difficulty / 2) + 10)) + 1, 99);
+            answer = Math.min(Math.floor(Math.random() * (Math.floor(difficulty / 2) + 10)) + 1, 999);
             leftOperand = rightOperand * answer;
             break;
         default:
@@ -146,7 +127,7 @@ const verifyAnswer = (answer: number): void => {
 
     if (answer === currentOperation.answer) {
         score++;
-        addTime(score < 25 ? 2 : 3);
+        addTime(2);
         updateScoreDisplay();
         newQuestion();
         currentInput = '';
