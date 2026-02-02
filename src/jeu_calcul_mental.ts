@@ -125,6 +125,8 @@ const resetGame = (): void => {
     score = 0;
     timer = 10;
     currentOperation = null;
+    currentInput = '';
+    inputDisplayElement.textContent = '';
     updateScoreDisplay();
     newQuestion();
     startTimer();
@@ -147,10 +149,9 @@ const verifyAnswer = (answer: number): void => {
         addTime(score < 25 ? 2 : 3);
         updateScoreDisplay();
         newQuestion();
+        currentInput = '';
+        inputDisplayElement.textContent = '';
     }
-
-    currentInput = '';
-    inputDisplayElement.textContent = '';
 }
 
 let currentInput = '';
@@ -161,15 +162,9 @@ document.querySelectorAll('.numpad button').forEach(button => {
 
         if (value === 'C') {
             currentInput = '';
-        } else if (value === 'OK') {
-            if (currentInput) {
-                verifyAnswer(parseInt(currentInput));
-                currentInput = '';
-            }
-        } else {
-            if (currentInput.length < 5) {
-                currentInput += value;
-            }
+        } else if (currentInput.length < 5) {
+            currentInput += value;
+            verifyAnswer(parseInt(currentInput));
         }
 
         inputDisplayElement.textContent = currentInput;
