@@ -5,7 +5,7 @@ type Operation = {
 
 let score = 0,
     currentOperation: Operation | null = null,
-    timer = 10,
+    timer = 100,
     timerInterval: number | null = null;
 
 const timerElement = document.getElementById('timer') as HTMLElement,
@@ -29,28 +29,27 @@ const generateOperation = (): Operation => {
         operators = ['+', '-', '×', '÷'];
     }
 
-    const operator = operators[Math.floor(Math.random() * operators.length)],
-        difficulty = Math.min(score, 100);
+    const operator = operators[Math.floor(Math.random() * operators.length)];
 
     switch (operator) {
         case '+':
-            leftOperand = Math.floor(Math.random() * (difficulty * 5 + 10)) + 1;
-            rightOperand = Math.floor(Math.random() * (difficulty * 5 + 10)) + 1;
+            leftOperand = Math.floor(Math.random() * (score * 5 + 10)) + 1;
+            rightOperand = Math.floor(Math.random() * (score * 5 + 10)) + 1;
             answer = leftOperand + rightOperand;
             break;
         case '-':
-            leftOperand = Math.floor(Math.random() * (difficulty * 5 + 20)) + 10;
+            leftOperand = Math.floor(Math.random() * (score * 3 + 20)) + 10;
             rightOperand = Math.floor(Math.random() * leftOperand);
             answer = leftOperand - rightOperand;
             break;
         case '×':
-            leftOperand = Math.min(Math.floor(Math.random() * (Math.floor(difficulty / 2) + 10)) + 1, 999);
-            rightOperand = Math.min(Math.floor(Math.random() * (Math.floor(difficulty / 3) + 10)) + 1, 99);
+            leftOperand = Math.min(Math.floor(Math.random() * (Math.floor(score / 2) + 8)) + 1, 999);
+            rightOperand = Math.min(Math.floor(Math.random() * (Math.floor(score / 3) + 8)) + 1, 99);
             answer = leftOperand * rightOperand;
             break;
         case '÷':
-            rightOperand = Math.min(Math.floor(Math.random() * (Math.floor(difficulty / 2) + 10)) + 1, 99);
-            answer = Math.min(Math.floor(Math.random() * (Math.floor(difficulty / 2) + 10)) + 1, 999);
+            rightOperand = Math.min(Math.floor(Math.random() * (Math.floor(score / 2) + 8)) + 1, 99);
+            answer = Math.min(Math.floor(Math.random() * (Math.floor(score / 2) + 8)) + 1, 999);
             leftOperand = rightOperand * answer;
             break;
         default:
@@ -58,7 +57,7 @@ const generateOperation = (): Operation => {
             rightOperand = 0;
             answer = 0;
     }
-
+console.log(answer)
     return {
         question: `${leftOperand} ${operator} ${rightOperand}`,
         answer
