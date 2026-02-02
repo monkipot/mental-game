@@ -5,7 +5,7 @@ type Operation = {
 
 let score = 0,
     currentOperation: Operation | null = null,
-    timer = 100,
+    timer = 10,
     timerInterval: number | null = null;
 
 const timerElement = document.getElementById('timer') as HTMLElement,
@@ -57,7 +57,7 @@ const generateOperation = (): Operation => {
             rightOperand = 0;
             answer = 0;
     }
-console.log(answer)
+
     return {
         question: `${leftOperand} ${operator} ${rightOperand}`,
         answer
